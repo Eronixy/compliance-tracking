@@ -19,102 +19,81 @@ $query = mysqli_query($conn, "
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
-<body>
+<body style="    
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;">
 
-<div class="container dashboard">
+    <div class="app-layout">
 
-    <?php include('sidebar.php'); ?>
+        <?php include('sidebar.php'); ?>
 
-    <div class="main-content glass">
+        <div class="main-wrapper-activity">
 
-        <?php
-        $currentSection = 'Activity Logs';
-        ?>
+            <!-- Header -->
+            <div class="top-bar">
+                <h1>Activity Logs</h1>
+            </div>
 
-        <div class="section-bar">
-            <div class="section-name"><?= htmlspecialchars($currentSection) ?></div>
-        </div>
+            <!-- Scrollable Content Area -->
+            <div class="content-body">
 
-        <h1>📜 Activity Timeline</h1>
-        <p style="opacity:0.7; margin-bottom:20px;">
-            Track everything you do inside the system.
-        </p>
+                <h1 class="page-title">Activity Timeline</h1>
+                <p class="page-subtitle">
+                    Track all your actions in the system. Monitor submissions, compliance updates, and security logs in
+                    chronological order.
+                </p>
 
-        <div class="timeline">
+                <div class="timeline">
 
-            <?php if (mysqli_num_rows($query) > 0) { ?>
+                    <?php if (mysqli_num_rows($query) > 0) { ?>
+                        <?php while ($row = mysqli_fetch_assoc($query)) { ?>
 
-                <?php while ($row = mysqli_fetch_assoc($query)) { ?>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
 
-                    <?php
-                        $action = strtolower($row['action']);
+                                <!-- The Timeline Box -->
+                                <div class="timeline-card">
+                                    <div class="card-content">
+                                        <!-- Tiny Clock Icon -->
+                                        <svg class="card-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                            stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
 
-                        $color = "#66b3ff";
-                        $icon = "📌";
+                                        <!-- Action Text -->
+                                        <span class="card-text">
+                                            <?= htmlspecialchars($row['action']) ?>
+                                            <?php if (!empty($row['task_id'])) { ?>
+                                                (Task #<?= $row['task_id'] ?>)
+                                            <?php } ?>
+                                        </span>
 
-                        if (strpos($action, 'submitted') !== false) {
-                            $color = "#00ff99";
-                            $icon = "📩";
-                        } elseif (strpos($action, 'updated') !== false) {
-                            $color = "#ffcc00";
-                            $icon = "🔄";
-                        } elseif (strpos($action, 'violation') !== false) {
-                            $color = "#ff4d4d";
-                            $icon = "⚠️";
-                        } elseif (strpos($action, 'task') !== false) {
-                            $color = "#9b59b6";
-                            $icon = "📋";
-                        }
-                    ?>
+                                        <!-- Timestamp -->
+                                        <span class="card-time">
+                                            <?= date('M d, Y h:i A', strtotime($row['log_time'])) ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="timeline-item glass" style="margin-bottom:15px; padding:15px; position:relative;">
+                        <?php } ?>
+                    <?php } else { ?>
+                        <p class="empty-state">No activity found.</p>
+                    <?php } ?>
 
-                        <!-- DOT -->
-                        <div style="
-                            width:10px;
-                            height:10px;
-                            background:<?= $color ?>;
-                            border-radius:50%;
-                            position:absolute;
-                            left:-5px;
-                            top:20px;
-                        "></div>
-
-                        <div class="content">
-
-                            <!-- ACTION -->
-                            <h3 style="margin:0; font-size:16px; color:<?= $color ?>;">
-                                <?= $icon ?> <?= htmlspecialchars($row['action']) ?>
-                            </h3>
-
-                            <!-- META -->
-                            <small style="opacity:0.6;">
-                                🕒 <?= $row['log_time'] ?>
-
-                                <?php if (!empty($row['task_id'])) { ?>
-                                    | 📋 Task #<?= $row['task_id'] ?>
-                                <?php } ?>
-                            </small>
-
-                        </div>
-
-                    </div>
-
-                <?php } ?>
-
-            <?php } else { ?>
-
-                <p style="opacity:0.6;">No activity found.</p>
-
-            <?php } ?>
+                </div>
+            </div>
 
         </div>
-
     </div>
 
-</div>
-
 </body>
+
 </html>

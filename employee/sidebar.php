@@ -1,28 +1,31 @@
-<div class="sidebar glass"> //updated sidebar
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
+
+<div class="sidebar"> 
 
     <?php
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
     $username = !empty($_SESSION['username']) ? $_SESSION['username'] : 'User';
-    ?>
-
-    <?php
+    $firstName = explode(' ', trim($username))[0] ?? $username;
+    
     $currentPage = basename($_SERVER['PHP_SELF']);
     ?>
 
+    <!-- Top Section -->
     <div class="sidebar-top">
+        
         <div class="sidebar-brand">
             <div class="sidebar-logo">
                 <img src="../shared/img/LogoBlack.svg" alt="Logo Black" />
             </div>
-            <div class="sidebar-user">
-                <span class="sidebar-username"><?= htmlspecialchars($username) ?></span>
-            </div>
+            <span class="sidebar-name">ano name</span>
         </div>
-        <h3>Compliance Tracking</h3>
+        <div class="sidebar-subtitle">Compliance Tracking</div>
 
-        <ul>
+        <ul class="sidebar-nav">
             <li><a class="<?= $currentPage === 'dashboard.php' ? 'active' : '' ?>" href="dashboard.php"><img src="../shared/img/Dashboard.svg" alt="Dashboard icon"><span>Dashboard</span></a></li>
             <li><a class="<?= $currentPage === 'activity-logs.php' ? 'active' : '' ?>" href="activity-logs.php"><img src="../shared/img/ActLogs.svg" alt="Activity Logs icon"><span>Activity Logs</span></a></li>
             <li><a class="<?= $currentPage === 'tasks.php' ? 'active' : '' ?>" href="tasks.php"><img src="../shared/img/Tasks.svg" alt="Tasks icon"><span>Tasks</span></a></li>
@@ -32,8 +35,22 @@
         </ul>
     </div>
 
+    <!-- Bottom Section -->
     <div class="sidebar-bottom">
-        <a class="sidebar-action <?= $currentPage === 'edit-account.php' ? 'active' : '' ?>" href="edit-account.php"><img src="../shared/img/Edit Account.svg" alt="Edit Account icon"><span>Edit Account</span></a>
-        <a class="sidebar-action" href="../includes/logout.php"><img src="../shared/img/Logout.svg" alt="Logout icon"><span>Logout</span></a>
+        
+        <hr class="sidebar-divider">
+        
+        <!-- Report Button -->
+        <a href="submit-report.php" class="btn-new-report">New Report</a>
+        
+        <!-- Bottom Links -->
+        <a class="sidebar-action <?= $currentPage === 'edit-account.php' ? 'active' : '' ?>" href="edit-account.php">
+            <img src="../shared/img/Edit Account.svg" alt="Edit Account icon">
+            <span>Edit Account</span>
+        </a>
+        <a class="sidebar-action" href="../includes/logout.php">
+            <img src="../shared/img/Logout.svg" alt="Logout icon">
+            <span>Logout</span>
+        </a>
     </div>
 </div>
