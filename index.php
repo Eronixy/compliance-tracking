@@ -31,7 +31,7 @@ if (isset($_POST['btnLogin'])) {
         if ($user['password'] === $password) {
 
             $_SESSION['id'] = $user['id'];
-            $_SESSION['username'] = $user['username']; 
+            $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role'];
 

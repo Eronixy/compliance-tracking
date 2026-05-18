@@ -6,6 +6,7 @@
         <?php echo isset($pageTitle) ? $pageTitle : 'Compliance Tracking'; ?>
     </title>
     <link rel="icon" type="image/svg+xml" href="../shared/img/logo.svg">
+    
     <link rel="icon" type="image/svg+xml" href="__DIR__ . '/../shared/img/logo.svg">
 
     <link rel="stylesheet" href="__DIR__ . '/../shared/css/style.css">
