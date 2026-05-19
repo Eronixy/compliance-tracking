@@ -66,55 +66,86 @@ if (isset($_POST['create'])) {
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
 
-    <div class="container dashboard">
+    <div class="app-layout">
 
         <?php include('sidebar.php'); ?>
 
-        <div class="main-content glass">
+        <div class="main-wrapper-dashboard">
 
-            <h1>Create Employee Account</h1>
-            <p style="opacity:0.7;">HR onboarding system</p>
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <h1>Create Employee Account</h1>
+            </div>
+
+            <!-- CONTENT BODY -->
+            <div class="content-body">
+
+            <p style="opacity:0.7;margin-bottom:20px;">HR onboarding system</p>
 
             <!-- SUCCESS MESSAGE -->
             <?php if ($message) { ?>
-                <div class="success-box" style="margin:10px 0;">
-                    <?= $message ?>
+                <div style="background:#d1fae5;color:#047857;padding:12px 16px;border-radius:8px;margin-bottom:20px;border-left:4px solid #047857;">
+                    <?= htmlspecialchars($message) ?>
                 </div>
             <?php } ?>
 
             <!-- FORM -->
-            <form method="POST">
+            <div class="chart-container">
+                <h2>New User Form</h2>
 
-                <input type="text" name="username" placeholder="Full Name" required><br><br>
+                <form method="POST" style="max-width:500px;">
 
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" name="username" placeholder="Full Name" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                    </div>
 
-                <input type="email" name="email" placeholder="Email Address" required><br><br>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" name="email" placeholder="Email Address" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                    </div>
 
-                <input type="text" name="contact_number" placeholder="Contact Number" required><br><br>
+                    <div class="input-group">
+                        <label>Contact Number</label>
+                        <input type="text" name="contact_number" placeholder="Contact Number" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                    </div>
 
-                <select name="department" required>
-                    <option value="IT">IT</option>
-                    <option value="HR">HR</option>
-                    <option value="SEC">Security</option>
-                </select><br><br>
+                    <div class="input-group">
+                        <label>Department</label>
+                        <select name="department" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                            <option value="">Select Department</option>
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="SEC">Security</option>
+                        </select>
+                    </div>
 
-                <select name="role" required>
-                    <option value="employee">Employee</option>
-                    <option value="security">Security</option>
-                    <option value="admin">Admin</option>
-                </select><br><br>
+                    <div class="input-group">
+                        <label>Role</label>
+                        <select name="role" required style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                            <option value="">Select Role</option>
+                            <option value="employee">Employee</option>
+                            <option value="security">Security</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
 
-                <button type="submit" name="create"
-                    style="background:#00ff99;padding:10px;border:none;">
-                    Create User
-                </button>
+                    <button type="submit" name="create"
+                        style="width:100%;background:#000;color:#fff;padding:12px;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:0.2s;">
+                        Create User
+                    </button>
 
-            </form>
+                </form>
 
+            </div>
+
+            </div>
         </div>
     </div>
 

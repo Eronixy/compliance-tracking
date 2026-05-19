@@ -21,108 +21,123 @@ $non = mysqli_num_rows(mysqli_query($conn, "SELECT * FROM compliance_records WHE
 
 $total = $compliant + $pending + $non;
 $rate = ($total > 0) ? round(($compliant / $total) * 100) : 0;
+
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
+    <div class="app-layout">
+        <?php include('sidebar.php'); ?>
 
-<div class="container dashboard">
+        <div class="main-wrapper-dashboard">
 
-    <?php include('sidebar.php'); ?>
-
-    <div class="main-content glass">
-
-        <!-- HEADER -->
-        <div style="margin-bottom: 20px;">
-            <h1 style="margin-bottom: 5px;">Security & Compliance Dashboard</h1>
-            <p style="opacity: 0.7; margin: 0;">
-                Overview of system activity, compliance status, and operational metrics
-            </p>
-        </div>
-
-        <!-- CARDS -->
-        <div class="cards" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:15px;">
-
-            <div class="card glass">
-                <h3>Users</h3>
-                <p><?= $users ?></p>
+            <!-- Header -->
+            <div class="top-bar">
+                <h1>Dashboard</h1>
             </div>
 
-            <div class="card glass">
-                <h3>Policies</h3>
-                <p><?= $policies ?></p>
-            </div>
+            <div class="content-body">
 
-            <div class="card glass">
-                <h3>Incidents</h3>
-                <p><?= $incidents ?></p>
-            </div>
+                <div class="hero-card">
+                    <div class="hero-content">
+                        <h2>Welcome, Admin</h2>
+                        <p>Overview of system activity, compliance status, and operational metrics.</p>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-ring" style="background: conic-gradient(#10b981 <?= $rate ?>%, #E2ECF7 0);">
+                            <div class="chart-inner">
+                                <span class="chart-perc"><?= $rate ?>%</span>
+                                <span class="chart-label">RATE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="card glass">
-                <h3>Violations</h3>
-                <p><?= $violations ?></p>
-            </div>
+                <!-- Dashboard Metrics -->
+                <div class="dashboard-cards">
+                    <div class="metric-card">
+                        <img src="../shared/img/users.jpg" alt="Users icon" class="metric-icon">
+                        <span>Users</span>
+                        <p class="stat-value"><?= $users ?></p>
+                    </div>
+                    <div class="metric-card">
+                        <img src="../shared/img/policies.jpg" alt="Policies icon" class="metric-icon">
+                        <span>Policies</span>
+                        <p class="stat-value"><?= $policies ?></p>
+                    </div>
+                    <div class="metric-card">
+                        <img src="../shared/img/incidents.jpg" alt="Incidents icon" class="metric-icon">
+                        <span>Incidents</span>
+                        <p class="stat-value"><?= $incidents ?></p>
+                    </div>
+                    <div class="metric-card">
+                        <img src="../shared/img/violations.jpg" alt="Violations icon" class="metric-icon">
+                        <span>Violations</span>
+                        <p class="stat-value"><?= $violations ?></p>
+                    </div>
+                    <div class="metric-card">
+                        <img src="../shared/img/tasks.jpg" alt="Tasks icon" class="metric-icon">
+                        <span>Tasks</span>
+                        <p class="stat-value"><?= $tasks ?></p>
+                    </div>
+                </div>
 
-            <div class="card glass">
-                <h3>Tasks</h3>
-                <p><?= $tasks ?></p>
-            </div>
+                <div class="dashboard-chart-card">
+                    <h2>Compliance Overview</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                </div>
 
-            <div class="card glass">
-                <h3>Compliance Rate</h3>
-                <p><?= $rate ?>%</p>
-            </div>
-
-        </div>
-
-        <!-- CHART SECTION (FIXED SIZE) -->
-        <div class="glass" style="margin-top: 30px; padding: 25px; border-radius: 15px;">
-
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h2 style="margin:0;">Compliance Overview</h2>
-                <span style="opacity:0.7; font-size:14px;">Real-time distribution</span>
-            </div>
-
-            <!-- SMALLER CHART WRAPPER -->
-            <div style="width: 100%; max-width: 380px; height: 260px; margin: 0 auto;">
-                <canvas id="complianceChart"></canvas>
             </div>
 
         </div>
 
     </div>
 
-</div>
-
-<script>
-const ctx = document.getElementById('complianceChart');
-
-new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Compliant', 'Pending', 'Non-Compliant'],
-        datasets: [{
-            data: [<?= $compliant ?>, <?= $pending ?>, <?= $non ?>],
-            backgroundColor: ['#00ff99', '#ffcc00', '#ff4d4d'],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '65%',
-        plugins: {
-            legend: {
-                position: 'bottom'
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('complianceChart').getContext('2d');
+        const complianceChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Compliant', 'Pending', 'Non-Compliant'],
+                datasets: [{
+                    data: [<?= $compliant ?>, <?= $pending ?>, <?= $non ?>],
+                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                    borderColor: '#ffffff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: {
+                                size: 14,
+                                weight: '600',
+                                family: "'Plus Jakarta Sans', sans-serif"
+                            }
+                        }
+                    }
+                }
             }
-        }
-    }
-});
-</script>
+        });
+    </script>
 
 </body>
+
 </html>

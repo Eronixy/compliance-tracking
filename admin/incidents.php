@@ -45,7 +45,7 @@ if (isset($_POST['escalate'])) {
 
 /* FETCH DATA */
 $data = mysqli_query($conn, "
-SELECT incident_reports.*, users.username
+SELECT incident_reports.*, users.username, users.department
 FROM incident_reports
 INNER JOIN users ON users.id = incident_reports.user_id
 ORDER BY date_reported DESC
@@ -55,111 +55,117 @@ ORDER BY date_reported DESC
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
 
-    <div class="container dashboard">
+    <div class="app-layout">
 
         <?php include('sidebar.php'); ?>
 
-        <div class="main-content glass">
+        <div class="main-wrapper-dashboard">
 
-            <h1>🚨 Incident Response Center</h1>
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <h1>Incident Response Center</h1>
+            </div>
 
-            <div class="glass" style="padding:20px;margin-top:20px;">
-                <div class="table-container">
-                    <table border="1" width="100%" cellpadding="8">
+            <!-- CONTENT BODY -->
+            <div class="content-body">
 
-                        <tr>
-                            <th>User</th>
-                            <th>Title</th>
-                            <th>Description</th>
-                            <th>Severity</th>
-                            <th>Status</th>
-                            <th>Proof</th>
-                            <th>Actions</th>
-                        </tr>
+            <!-- PAGE HEADER -->
+            <div class="incident-hero">
+                <h2 class="incident-title">Incident Response Center</h2>
+                <p class="incident-subtitle">Review, resolve, and escalate employee incident reports. Prioritize actions based on severity indicators and maintain a clear audit trail.</p>
+            </div>
 
-                        <?php while ($i = mysqli_fetch_assoc($data)) { ?>
-
+            <!-- INCIDENTS TABLE CARD -->
+            <div class="incidents-card">
+                <h3 class="incidents-section-title">Department Performance</h3>
+                
+                <div class="incidents-table-wrapper">
+                    <table class="incidents-table">
+                        <thead>
                             <tr>
-
-                                <td><?= $i['username'] ?></td>
-
-                                <td><?= $i['title'] ?></td>
-
-                                <td style="max-width:250px;">
-                                    <?= nl2br($i['description']) ?>
-                                </td>
-
+                                <th>USER</th>
+                                <th>TITLE</th>
+                                <th>DESCRIPTION</th>
+                                <th>SEVERITY</th>
+                                <th>STATUS</th>
+                                <th>PROOF</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while ($i = mysqli_fetch_assoc($data)) { 
+                                $severityClass = strtolower($i['severity']);
+                                $statusClass = strtolower(str_replace(' ', '-', $i['status']));
+                                $userInitials = strtoupper(substr($i['username'], 0, 2));
+                            ?>
+                            <tr>
                                 <td>
-                                    <?php
-                                    if ($i['severity'] == 'High') echo "🔴 High";
-                                    elseif ($i['severity'] == 'Medium') echo "🟡 Medium";
-                                    elseif ($i['severity'] == 'Low') echo "🟢 Low";
-                                    else echo $i['severity'];
-                                    ?>
+                                    <div class="incident-user-cell">
+                                        <div class="incident-avatar"><?= $userInitials ?></div>
+                                        <div class="incident-user-info">
+                                            <div class="incident-username"><?= htmlspecialchars($i['username']) ?></div>
+                                            <div class="incident-department"><?= htmlspecialchars($i['department'] ?? 'N/A') ?></div>
+                                        </div>
+                                    </div>
                                 </td>
-
                                 <td>
-                                    <?php
-                                    if ($i['status'] == 'Resolved') echo "🟢 Resolved";
-                                    elseif ($i['status'] == 'Escalated') echo "🔴 Escalated";
-                                    elseif ($i['status'] == 'Under Review') echo "🟡 Under Review";
-                                    else echo "⚪ Pending";
-                                    ?>
+                                    <strong><?= htmlspecialchars($i['title']) ?></strong>
                                 </td>
-
+                                <td>
+                                    <span class="incident-desc"><?= nl2br(htmlspecialchars(substr($i['description'], 0, 50))) ?></span>
+                                </td>
+                                <td>
+                                    <span class="severity-badge severity-<?= $severityClass ?>">
+                                        ● <?= ucfirst($i['severity']) ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-<?= $statusClass ?>">
+                                        <?= ucfirst($i['status']) ?>
+                                    </span>
+                                </td>
                                 <td>
                                     <?php if (!empty($i['proof_image'])) { ?>
-                                        <a href="../uploads/<?= $i['proof_image'] ?>" target="_blank">View</a>
+                                        <a href="../shared/uploads/<?= $i['proof_image'] ?>" target="_blank" class="proof-link">View Log</a>
                                     <?php } else {
-                                        echo "No proof";
+                                        echo "—";
                                     } ?>
                                 </td>
-
                                 <td>
-
-                                    <!-- UPDATE FORM -->
-                                    <form method="POST" style="margin-bottom:10px;">
-                                        <input type="hidden" name="incident_id" value="<?= $i['id'] ?>">
-
-                                        <select name="status">
-                                            <option value="Under Review">Under Review</option>
-                                            <option value="Resolved">Resolved</option>
-                                        </select>
-
-                                        <input type="text" name="notes" placeholder="Admin note">
-
-                                        <button type="submit" name="update_incident">
-                                            Update
-                                        </button>
-                                    </form>
-
-                                    <!-- ESCALATE FORM -->
-                                    <form method="POST">
-                                        <input type="hidden" name="incident_id" value="<?= $i['id'] ?>">
-
-                                        <input type="text" name="reason" placeholder="Escalation reason" required>
-
-                                        <button type="submit" name="escalate" style="color:red;">
-                                            Escalate 🚨
-                                        </button>
-                                    </form>
-
+                                    <div class="incident-actions">
+                                        <form method="POST" class="incident-action-form">
+                                            <input type="hidden" name="incident_id" value="<?= $i['id'] ?>">
+                                            <select name="status" class="action-select">
+                                                <option value="">Set Status...</option>
+                                                <option value="Under Review">Under Review</option>
+                                                <option value="Resolved">Resolved</option>
+                                            </select>
+                                        </form>
+                                        
+                                        <form method="POST" class="incident-escalate-form">
+                                            <input type="hidden" name="incident_id" value="<?= $i['id'] ?>">
+                                            <input type="text" name="reason" placeholder="Escalation reason..." class="escalation-input" required>
+                                            <button type="submit" name="escalate" class="btn-escalate">Escalate ►</button>
+                                        </form>
+                                    </div>
                                 </td>
-
                             </tr>
-
-                        <?php } ?>
-
+                            <?php } ?>
+                        </tbody>
                     </table>
-
                 </div>
+            </div>
 
             </div>
         </div>
+
+    </div>
 
 </body>
 

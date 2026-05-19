@@ -25,13 +25,14 @@ $totalIncidents = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM incident_r
 
 /* HIGH RISK USERS */
 $highRiskUsers = mysqli_query($conn, "
-SELECT users.username, users.id,
+SELECT users.username, users.id, users.department,
 COUNT(violations.id) as violation_count
 FROM users
 LEFT JOIN violations ON violations.user_id = users.id
 GROUP BY users.id
 HAVING violation_count >= 3
 ORDER BY violation_count DESC
+LIMIT 5
 ");
 
 /* DEPARTMENT PERFORMANCE */
@@ -63,155 +64,153 @@ SELECT COUNT(*) as total FROM violations WHERE severity='High'
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
 
-    <div class="container dashboard">
+    <div class="app-layout">
 
         <?php include('sidebar.php'); ?>
 
-        <div class="main-content glass">
+        <div class="main-wrapper-dashboard">
 
-            <h1>📈 Reports & Analytics (Decision Support System)</h1>
-
-            <p style="opacity:0.7;">
-                Executive intelligence dashboard for compliance decision-making
-            </p>
-
-            <!-- KPI CARDS -->
-            <div class="cards" style="margin-top:20px;">
-
-                <div class="card glass">
-                    <h3>👥 Users</h3>
-                    <p><?= $totalUsers ?></p>
-                </div>
-
-                <div class="card glass">
-                    <h3>⚠ Violations</h3>
-                    <p><?= $totalViolations ?></p>
-                </div>
-
-                <div class="card glass">
-                    <h3>🚨 Incidents</h3>
-                    <p><?= $totalIncidents ?></p>
-                </div>
-
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <h1>Reports & Analytics</h1>
             </div>
 
-            <!-- RISK DISTRIBUTION -->
-            <div class="glass" style="margin-top:25px; padding:20px;">
+            <!-- CONTENT BODY -->
+            <div class="content-body">
 
-                <h3>📊 Risk Distribution</h3>
-
-                <p>🟢 Low Risk: <?= $lowRisk ?></p>
-                <p>🟡 Medium Risk: <?= $medRisk ?></p>
-                <p>🔴 High Risk: <?= $highRisk ?></p>
-
+            <!-- PAGE HEADER -->
+            <div class="page-header-analytics">
+                <h2 class="page-title">Reports & Analytics</h2>
+                <p class="page-subtitle">Executive intelligence dashboard for compliance decision making</p>
             </div>
 
-            <!-- HIGH RISK USERS -->
-            <div class="glass" style="margin-top:20px; padding:20px;">
+            <!-- KPI CARDS GRID -->
+            <div class="kpi-grid-analytics">
+                <div class="kpi-card kpi-users">
+                    <div class="kpi-accent kpi-accent-users"></div>
+                    <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                    <div class="kpi-label">TOTAL USERS</div>
+                    <div class="kpi-value"><?= $totalUsers ?></div>
+                </div>
+                <div class="kpi-card kpi-violations">
+                    <div class="kpi-accent kpi-accent-violations"></div>
+                    <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#ef4444" stroke="#ef4444" stroke-width="1.5"/></svg></div>
+                    <div class="kpi-label">TOTAL VIOLATIONS</div>
+                    <div class="kpi-value"><?= $totalViolations ?></div>
+                </div>
+                <div class="kpi-card kpi-incidents">
+                    <div class="kpi-accent kpi-accent-incidents"></div>
+                    <div class="kpi-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#fb923c" stroke="#fb923c" stroke-width="1.5"/></svg></div>
+                    <div class="kpi-label">TOTAL INCIDENTS</div>
+                    <div class="kpi-value"><?= $totalIncidents ?></div>
+                </div>
+            </div>
 
-                <h3>🚨 High Risk Employees</h3>
-                <div class="table-container">
-                    <table width="100%" border="1" cellpadding="8">
+            <!-- RISK DISTRIBUTION & HIGH RISK EMPLOYEES -->
+            <div class="analytics-grid">
+                <!-- RISK DISTRIBUTION -->
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <h3>Risk Distribution</h3>
+                        <button class="card-menu">⋯</button>
+                    </div>
+                    <div class="risk-distribution">
+                        <div class="risk-item">
+                            <span class="risk-label">Low Risk</span>
+                            <div class="risk-bar-container">
+                                <div class="risk-bar" style="width: <?= ($lowRisk / max($lowRisk, $medRisk, $highRisk, 1)) * 100 ?>%; background-color: #3b82f6;"></div>
+                            </div>
+                            <span class="risk-count"><?= $lowRisk ?></span>
+                        </div>
+                        <div class="risk-item">
+                            <span class="risk-label">Medium Risk</span>
+                            <div class="risk-bar-container">
+                                <div class="risk-bar" style="width: <?= ($medRisk / max($lowRisk, $medRisk, $highRisk, 1)) * 100 ?>%; background-color: #fb923c;"></div>
+                            </div>
+                            <span class="risk-count"><?= $medRisk ?></span>
+                        </div>
+                        <div class="risk-item">
+                            <span class="risk-label">High Risk</span>
+                            <div class="risk-bar-container">
+                                <div class="risk-bar" style="width: <?= ($highRisk / max($lowRisk, $medRisk, $highRisk, 1)) * 100 ?>%; background-color: #ef4444;"></div>
+                            </div>
+                            <span class="risk-count"><?= $highRisk ?></span>
+                        </div>
+                    </div>
+                </div>
 
-                        <tr>
-                            <th>User</th>
-                            <th>Violations</th>
-                            <th>Risk Level</th>
-                        </tr>
-
-                        <?php while ($u = mysqli_fetch_assoc($highRiskUsers)) { ?>
-
-                            <tr>
-
-                                <td><?= $u['username'] ?></td>
-
-                                <td><?= $u['violation_count'] ?></td>
-
-                                <td style="color:red;">HIGH RISK</td>
-
-                            </tr>
-
+                <!-- HIGH RISK EMPLOYEES -->
+                <div class="analytics-card">
+                    <h3 class="card-header-simple">High Risk Employees</h3>
+                    <div class="high-risk-list">
+                        <?php while ($u = mysqli_fetch_assoc($highRiskUsers)) { 
+                            $initials = strtoupper(substr($u['username'], 0, 1));
+                        ?>
+                            <div class="risk-employee-item">
+                                <div class="employee-avatar" style="background-color: #f3e8ff; color: #7c3aed;">D</div>
+                                <div class="employee-info">
+                                    <div class="employee-name"><?= htmlspecialchars($u['username']) ?></div>
+                                    <div class="employee-dept"><?= htmlspecialchars($u['department'] ?? 'N/A') ?></div>
+                                </div>
+                                <div class="employee-violations"><?= $u['violation_count'] ?> Violations</div>
+                                <div class="badge-high-risk">HIGH RISK</div>
+                            </div>
                         <?php } ?>
-                    </table>
+                    </div>
+                    <button class="btn-view-all">View All Risk Profiles</button>
                 </div>
-
             </div>
 
             <!-- DEPARTMENT PERFORMANCE -->
-            <div class="glass" style="margin-top:20px; padding:20px;">
-
-                <h3>🏢 Department Performance</h3>
-                <div class="table-container">
-                    <table width="100%" border="1" cellpadding="8">
-
-                        <tr>
-                            <th>Department</th>
-                            <th>Violations</th>
-                            <th>Incidents</th>
-                            <th>Performance</th>
-                        </tr>
-
-                        <?php while ($d = mysqli_fetch_assoc($deptPerformance)) { ?>
-
+            <div class="analytics-card full-width">
+                <h3 class="card-header-simple">Department Performance</h3>
+                <div class="dept-table-wrapper">
+                    <table class="dept-performance-table">
+                        <thead>
                             <tr>
-
-                                <td><?= $d['department'] ?? 'N/A' ?></td>
-
+                                <th>DEPARTMENT</th>
+                                <th>VIOLATIONS</th>
+                                <th>INCIDENTS</th>
+                                <th>PERFORMANCE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php while ($d = mysqli_fetch_assoc($deptPerformance)) { 
+                            $score = $d['violations'] + $d['incidents'];
+                            if ($score >= 10) {
+                                $badge = 'POOR';
+                                $badgeClass = 'badge-poor';
+                            } elseif ($score >= 5) {
+                                $badge = 'AVERAGE';
+                                $badgeClass = 'badge-average';
+                            } else {
+                                $badge = 'GOOD';
+                                $badgeClass = 'badge-good';
+                            }
+                        ?>
+                            <tr>
+                                <td><?= htmlspecialchars($d['department'] ?? 'N/A') ?></td>
                                 <td><?= $d['violations'] ?></td>
-
                                 <td><?= $d['incidents'] ?></td>
-
-                                <td>
-                                    <?php
-                                    $score = $d['violations'] + $d['incidents'];
-
-                                    if ($score >= 10) echo "🔴 Poor";
-                                    elseif ($score >= 5) echo "🟡 Average";
-                                    else echo "🟢 Good";
-                                    ?>
-                                </td>
-
+                                <td><span class="perf-badge <?= $badgeClass ?>"><?= $badge ?></span></td>
                             </tr>
-
                         <?php } ?>
-
+                        </tbody>
                     </table>
-
                 </div>
             </div>
-            <!-- TREND ANALYSIS -->
-            <div class="glass" style="padding:20px;margin-top:20px;">
-
-                <h3>📈 Violation Trend (By Date)</h3>
-                <div class="table-container">
-                    <table width="100%" border="1" cellpadding="8">
-
-                        <tr>
-                            <th>Date</th>
-                            <th>Total Violations</th>
-                        </tr>
-
-                        <?php while ($t = mysqli_fetch_assoc($violationsTrend)) { ?>
-
-                            <tr>
-                                <td><?= $t['date'] ?></td>
-                                <td><?= $t['total'] ?></td>
-                            </tr>
-
-                        <?php } ?>
-
-                    </table>
-
-                </div>
 
             </div>
-
         </div>
+
+    </div>
 
 </body>
 
-</html>1
+</html>

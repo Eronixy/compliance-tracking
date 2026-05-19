@@ -117,114 +117,105 @@ $users = mysqli_query($conn, "
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
 
-<div class="container dashboard">
+<div class="app-layout">
 
 <?php include('sidebar.php'); ?>
 
-<div class="main-content glass">
+<div class="main-wrapper-dashboard">
 
-<!-- HEADER -->
-<div style="display:flex;justify-content:space-between;align-items:center;">
+<!-- TOP BAR -->
+<div class="top-bar">
+    <h1>User Management</h1>
+</div>
 
+<!-- CONTENT BODY -->
+<div class="content-body">
+
+<!-- HEADER WITH CREATE BUTTON -->
+<div class="page-header-row">
     <div>
-        <h1>👤 User Management</h1>
-        <p style="opacity:0.7;">Manage employees, security, and admin accounts</p>
+        <h2 class="page-title">User Management</h2>
+        <p class="page-subtitle">Centralize your organizational governance. Manage employee access levels, security protocols, and administrative account permissions from one shared dashboard.</p>
     </div>
 
-    <a href="create-user.php"
-       style="background:#00ff99;color:#000;padding:10px 15px;border-radius:8px;text-decoration:none;font-weight:bold;">
-        + Create User
-    </a>
-
+    <a href="create-user.php" class="btn-create-user">+ Create User</a>
 </div>
 
 <!-- SUCCESS / ERROR MESSAGES -->
 <?php if (isset($_GET['success']) && $_GET['success'] == 'passwordreset') { ?>
-    <div class="success-box">✔ Password reset successfully!</div>
+    <div class="alert-banner alert-success">✔ Password reset successfully!</div>
 <?php } ?>
 
 <?php if (isset($_GET['success']) && $_GET['success'] == 'violationreset') { ?>
-    <div class="success-box">✔ Violation count reset!</div>
+    <div class="alert-banner alert-success">✔ Violation count reset!</div>
 <?php } ?>
 
 <?php if (isset($_GET['success']) && $_GET['success'] == 'deleted') { ?>
-    <div class="success-box">✔ User deleted successfully!</div>
+    <div class="alert-banner alert-success">✔ User deleted successfully!</div>
 <?php } ?>
 
 <?php if (isset($_GET['error']) && $_GET['error'] == 'cannotdeleteown') { ?>
-    <div class="error-box">❌ You cannot delete your own account!</div>
+    <div class="alert-banner alert-error">❌ You cannot delete your own account!</div>
 <?php } ?>
 
 <!-- TABLE -->
-<div class="glass" style="margin-top:20px;padding:20px;overflow-x:auto;">
+<div class="user-table-card">
+    <table class="custom-table">
+    <thead>
+        <tr>
+            <th>Employee ID</th>
+            <th>Username</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php while ($row = mysqli_fetch_assoc($users)) { ?>
+        <tr>
+            <td><?= htmlspecialchars($row['employee_id'] ?? 'NOT ASSIGNED') ?></td>
+            <td><?= htmlspecialchars($row['username']) ?></td>
+            <td><?= htmlspecialchars($row['department'] ?? 'N/A') ?></td>
+            <td><?= strtoupper(htmlspecialchars($row['role'])) ?></td>
 
-<table style="width:100%;color:white;border-collapse:collapse;min-width:1000px;">
+            <td>
+                <?php if ($row['is_locked']) { ?>
+                    <span class="status-badge status-locked">LOCKED</span>
+                <?php } else { ?>
+                    <span class="status-badge status-active">ACTIVE</span>
+                <?php } ?>
+            </td>
 
-<tr style="text-align:left;border-bottom:1px solid rgba(255,255,255,0.2);">
-    <th>Employee ID</th>
-    <th>Username</th>
-    <th>Department</th>
-    <th>Role</th>
-    <th>Status</th>
-    <th>Actions</th>
-</tr>
+            <td class="actions-cell">
+                <div class="table-actions">
+                    <?php if ($row['is_locked'] == 0) { ?>
+                        <a href="?lock=<?= $row['id'] ?>" class="action-link action-warning">Lock</a>
+                    <?php } else { ?>
+                        <a href="?unlock=<?= $row['id'] ?>" class="action-link action-success">Unlock</a>
+                    <?php } ?>
 
-<?php while ($row = mysqli_fetch_assoc($users)) { ?>
+                    <a href="?reset=<?= $row['id'] ?>" class="action-link action-danger">Reset PW</a>
+                    <a href="?reset_violation=<?= $row['id'] ?>" class="action-link action-warning">Reset Violation</a>
+                    <a href="edit-users.php?id=<?= $row['id'] ?>" class="action-link action-primary">Edit</a>
+                    <a href="?delete=<?= $row['id'] ?>"
+                       onclick="return confirm('Are you sure you want to delete this user? This cannot be undone!');"
+                       class="action-link action-danger">Delete</a>
+                </div>
+            </td>
 
-<tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+        </tr>
 
-    <td><?= $row['employee_id'] ?? 'NOT ASSIGNED' ?></td>
-    <td><?= $row['username'] ?></td>
-    <td><?= $row['department'] ?? 'N/A' ?></td>
-    <td><?= strtoupper($row['role']) ?></td>
-
-    <td>
-        <?php if ($row['is_locked']) { ?>
-            <span style="color:#ff4d4d;">LOCKED</span>
-        <?php } else { ?>
-            <span style="color:#00ff99;">ACTIVE</span>
         <?php } ?>
-    </td>
 
-    <td style="white-space:nowrap;">
-
-        <?php if ($row['is_locked'] == 0) { ?>
-            <a href="?lock=<?= $row['id'] ?>" style="color:#ffcc00;">Lock</a>
-        <?php } else { ?>
-            <a href="?unlock=<?= $row['id'] ?>" style="color:#00ff99;">Unlock</a>
-        <?php } ?>
-
-        &nbsp;|&nbsp;
-
-        <a href="?reset=<?= $row['id'] ?>" style="color:#ff4d4d;">Reset PW</a>
-
-        &nbsp;|&nbsp;
-
-        <a href="?reset_violation=<?= $row['id'] ?>" style="color:#ff9900;">Reset Violation</a>
-
-        &nbsp;|&nbsp;
-
-        <a href="edit-users.php?id=<?= $row['id'] ?>" style="color:#00ccff;">Edit</a>
-
-        &nbsp;|&nbsp;
-
-        <a href="?delete=<?= $row['id'] ?>"
-           onclick="return confirm('Are you sure you want to delete this user? This cannot be undone!');"
-           style="color:#ff4d4d;">
-           Delete
-        </a>
-
-    </td>
-
-</tr>
-
-<?php } ?>
-
-</table>
+    </tbody>
+    </table>
 
 </div>
 

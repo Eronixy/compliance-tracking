@@ -37,83 +37,95 @@ ORDER BY log_time DESC
 
 <body>
 
-<div class="container dashboard">
+<div class="app-layout">
 
     <?php include('sidebar.php'); ?>
 
-    <div class="main-content glass">
+    <div class="main-wrapper-dashboard">
 
-        <h1>🧾 Audit Logs (Truth Tracking System)</h1>
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <h1>Audit Logs & Activity Tracking</h1>
+        </div>
+
+        <!-- CONTENT BODY -->
+        <div class="content-body">
 
         <!-- FILTER PANEL -->
-        <form method="GET" style="margin-top:15px; display:flex; gap:10px;">
-            <input type="text" name="search" placeholder="Search user / action / module">
+        <form method="GET" style="display:flex;gap:10px;margin-bottom:20px;">
+            <input type="text" name="search" placeholder="Search user / action / module" style="flex:1;padding:10px;border:1px solid #d1d5db;border-radius:6px;">
 
-            <select name="severity">
+            <select name="severity" style="padding:10px;border:1px solid #d1d5db;border-radius:6px;">
                 <option value="">All Severity</option>
                 <option value="info">Info</option>
                 <option value="warning">Warning</option>
                 <option value="critical">Critical</option>
             </select>
 
-            <button type="submit">Filter</button>
+            <button type="submit" style="background:#000;color:#fff;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Filter</button>
         </form>
 
         <!-- TABLE -->
-        <div class="glass" style="padding:20px;margin-top:20px;">
+        <div class="table-box">
             <div class="table-container">
 
-                <table border="1" width="100%" cellpadding="8">
-                    <tr>
-                        <th>User</th>
-                        <th>Action</th>
-                        <th>Module</th>
-                        <th>Status</th>
-                        <th>Severity</th>
-                        <th>Task ID</th>
-                        <th>IP Address</th>
-                        <th>Date</th>
-                    </tr>
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Module</th>
+                            <th>Status</th>
+                            <th>Severity</th>
+                            <th>Task ID</th>
+                            <th>IP Address</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
                     <?php while ($l = mysqli_fetch_assoc($data)) { ?>
 
                         <tr>
 
-                            <td><?= $l['username'] ?></td>
+                            <td><?= htmlspecialchars($l['username']) ?></td>
 
-                            <td><?= $l['action'] ?></td>
+                            <td><?= htmlspecialchars($l['action']) ?></td>
 
-                            <td><?= $l['module'] ?></td>
+                            <td><?= htmlspecialchars($l['module']) ?></td>
 
-                            <td><?= $l['status'] ?></td>
+                            <td><?= htmlspecialchars($l['status']) ?></td>
 
                             <!-- SEVERITY HIGHLIGHT -->
                             <td>
                                 <?php if ($l['severity'] == 'critical') { ?>
-                                    <span style="color:red;font-weight:bold;">⚠ <?= $l['severity'] ?></span>
+                                    <span style="color:#ef4444;font-weight:bold;">⚠ <?= htmlspecialchars($l['severity']) ?></span>
                                 <?php } elseif ($l['severity'] == 'warning') { ?>
-                                    <span style="color:orange;"><?= $l['severity'] ?></span>
+                                    <span style="color:#f59e0b;"><?= htmlspecialchars($l['severity']) ?></span>
                                 <?php } else { ?>
-                                    <span style="color:green;"><?= $l['severity'] ?></span>
+                                    <span style="color:#10b981;"><?= htmlspecialchars($l['severity']) ?></span>
                                 <?php } ?>
                             </td>
 
-                            <td><?= $l['task_id'] ?></td>
+                            <td><?= htmlspecialchars($l['task_id']) ?></td>
 
-                            <td><?= $l['ip_address'] ?></td>
+                            <td><?= htmlspecialchars($l['ip_address']) ?></td>
 
-                            <td><?= $l['log_time'] ?></td>
+                            <td><?= htmlspecialchars($l['log_time']) ?></td>
 
                         </tr>
 
                     <?php } ?>
 
+                    </tbody>
                 </table>
 
             </div>
         </div>
 
+        </div>
     </div>
+
 </div>
 
 </body>

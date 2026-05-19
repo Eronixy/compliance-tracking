@@ -86,137 +86,129 @@ $users = mysqli_query($conn, "SELECT id, username FROM users");
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
 
-<div class="container dashboard">
+<div class="app-layout">
 
 <?php include('sidebar.php'); ?>
 
-<div class="main-content glass">
+<div class="main-wrapper-dashboard">
 
-<h1>🛡 Policy Management</h1>
-<p style="opacity:0.7;">Create, activate, and assign compliance policies</p>
-
-<!-- SUCCESS MESSAGES -->
-<?php if (isset($_GET['success']) && $_GET['success'] == 'created') { ?>
-    <div class="success-box">✔ Policy created successfully!</div>
-<?php } ?>
-
-<?php if (isset($_GET['success']) && $_GET['success'] == 'assigned') { ?>
-    <div class="success-box">✔ Policy assigned to employee successfully!</div>
-<?php } ?>
-
-<!-- =========================
-     CREATE POLICY
-========================= -->
-<div class="glass" style="padding:20px;margin-top:20px;">
-
-    <h3>Create New Policy</h3>
-
-    <form method="POST">
-
-        <input type="text" name="policy_name" placeholder="Policy Name" required
-               style="width:100%;padding:10px;margin-bottom:10px;">
-
-        <textarea name="description" placeholder="Description" required
-                  style="width:100%;padding:10px;margin-bottom:10px;"></textarea>
-
-        <button type="submit" name="create_policy"
-                style="background:#00ff99;color:#000;padding:10px 15px;border:none;border-radius:6px;font-weight:bold;">
-            + Create Policy
-        </button>
-
-    </form>
-
+<!-- TOP BAR -->
+<div class="top-bar">
+    <h1>Policies</h1>
 </div>
 
-<!-- =========================
-     ASSIGN POLICY
-========================= -->
-<div class="glass" style="padding:20px;margin-top:20px;">
+<!-- CONTENT BODY -->
+<div class="content-body">
 
-    <h3>Assign Policy to Employee</h3>
+    <div class="page-header-row">
+        <div>
+            <h1 class="page-title">Policy Management</h1>
+            <p class="page-subtitle">Create, activate, and assign compliance policies.</p>
+        </div>
+    </div>
 
-    <form method="POST">
+    <?php if (isset($_GET['success']) && $_GET['success'] == 'created') { ?>
+        <div class="alert-banner alert-success">✔ Policy created successfully!</div>
+    <?php } ?>
 
-        <!-- USER -->
-        <select name="user_id" required style="width:100%;padding:10px;margin-bottom:10px;">
-            <option value="">Select Employee</option>
-            <?php while ($u = mysqli_fetch_assoc($users)) { ?>
-                <option value="<?= $u['id'] ?>">
-                    <?= $u['username'] ?> (<?= $u['username'] ?>)
-                </option>
-            <?php } ?>
-        </select>
+    <?php if (isset($_GET['success']) && $_GET['success'] == 'assigned') { ?>
+        <div class="alert-banner alert-success">✔ Policy assigned successfully!</div>
+    <?php } ?>
 
-        <!-- POLICY -->
-        <select name="policy_id" required style="width:100%;padding:10px;margin-bottom:10px;">
-            <option value="">Select Policy</option>
-            <?php
-            $plist = mysqli_query($conn, "SELECT * FROM policies");
-            while ($p = mysqli_fetch_assoc($plist)) {
-            ?>
-                <option value="<?= $p['id'] ?>">
-                    <?= $p['policy_name'] ?> (<?= $p['status'] ?>)
-                </option>
-            <?php } ?>
-        </select>
+    <div class="policy-grid">
 
-        <button type="submit" name="assign_policy"
-                style="background:#00ccff;color:#000;padding:10px 15px;border:none;border-radius:6px;font-weight:bold;">
-            + Assign Policy
-        </button>
+        <div class="policy-card">
+            <div class="policy-card-header">
+                <div class="policy-card-icon"><img src="../shared/img/createnewpolicy.jpg" alt="Create Policy"></div>
+                <div>
+                    <h3>Create New Policy</h3>
+                </div>
+            </div>
 
-    </form>
+            <form method="POST" class="policy-form">
+                <label class="form-label">Policy Name</label>
+                <input type="text" name="policy_name" placeholder="e.g. Data Privacy Act 2024" required class="form-input">
 
-</div>
+                <label class="form-label">Description</label>
+                <textarea name="description" placeholder="Briefly describe the purpose and scope of this policy..." required class="form-textarea"></textarea>
 
-<!-- =========================
-     POLICY TABLE
-========================= -->
-<div class="glass" style="padding:20px;margin-top:20px;overflow-x:auto;">
+                <button type="submit" name="create_policy" class="btn-primary">+ Create Policy</button>
+            </form>
+        </div>
 
-<table style="width:100%;color:white;border-collapse:collapse;min-width:800px;">
+        <div class="policy-card">
+            <div class="policy-card-header">
+                <div class="policy-card-icon"><img src="../shared/img/assignpolicy.jpg" alt="Assign Policy"></div>
+                <div>
+                    <h3>Assign Policy</h3>
+                </div>
+            </div>
 
-<tr style="text-align:left;border-bottom:1px solid rgba(255,255,255,0.2);">
-    <th>Policy Name</th>
-    <th>Description</th>
-    <th>Status</th>
-    <th>Action</th>
-</tr>
+            <form method="POST" class="policy-form">
+                <label class="form-label">Select Employee</label>
+                <select name="user_id" required class="form-input">
+                    <option value="">Select Employee</option>
+                    <?php while ($u = mysqli_fetch_assoc($users)) { ?>
+                        <option value="<?= $u['id'] ?>"><?= htmlspecialchars($u['username']) ?></option>
+                    <?php } ?>
+                </select>
 
-<?php while ($p = mysqli_fetch_assoc($policies)) { ?>
+                <label class="form-label">Select Policy</label>
+                <select name="policy_id" required class="form-input">
+                    <option value="">Select Policy</option>
+                    <?php
+                    $plist = mysqli_query($conn, "SELECT * FROM policies");
+                    while ($p = mysqli_fetch_assoc($plist)) {
+                    ?>
+                        <option value="<?= $p['id'] ?>"><?= htmlspecialchars($p['policy_name']) ?> (<?= htmlspecialchars($p['status']) ?>)</option>
+                    <?php } ?>
+                </select>
 
-<tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+                <button type="submit" name="assign_policy" class="btn-secondary">+ Assign Policy</button>
+            </form>
+        </div>
 
-    <td><?= htmlspecialchars($p['policy_name']) ?></td>
-    <td><?= htmlspecialchars($p['description']) ?></td>
+    </div>
 
-    <td>
-        <?php if ($p['status'] === 'Active') { ?>
-            <span style="color:#00ff99;font-weight:bold;">ACTIVE</span>
-        <?php } else { ?>
-            <span style="color:#ff4d4d;font-weight:bold;">INACTIVE</span>
-        <?php } ?>
-    </td>
-
-    <td>
-        <a href="policies.php?toggle=<?= $p['id'] ?>"
-           onclick="return confirm('Toggle this policy status?');"
-           style="color:#00ccff;">
-           Toggle
-        </a>
-    </td>
-
-</tr>
-
-<?php } ?>
-
-</table>
-
-</div>
+    <div class="section-card">
+        <h2>Active Policies Overview</h2>
+        <div class="table-box">
+            <table class="custom-table policy-table">
+                <thead>
+                    <tr>
+                        <th>Policy Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($p = mysqli_fetch_assoc($policies)) { ?>
+                        <tr>
+                            <td><?= htmlspecialchars($p['policy_name']) ?></td>
+                            <td><?= htmlspecialchars($p['description']) ?></td>
+                            <td>
+                                <?php if ($p['status'] === 'Active') { ?>
+                                    <span class="status-pill status-compliant">Active</span>
+                                <?php } else { ?>
+                                    <span class="status-pill status-pending">Inactive</span>
+                                <?php } ?>
+                            </td>
+                            <td>
+                                <a href="policies.php?toggle=<?= $p['id'] ?>" onclick="return confirm('Toggle this policy status?');" class="action-link action-primary">Toggle</a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 </div>
 </div>

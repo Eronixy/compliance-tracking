@@ -47,190 +47,161 @@ INNER JOIN users ON users.id = compliance_records.user_id
 GROUP BY users.department
 ORDER BY risk_score DESC
 ");
+
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
 
-    <div class="container dashboard">
+    <div class="app-layout">
 
         <?php include('sidebar.php'); ?>
 
-        <div class="main-content glass">
+        <div class="main-wrapper-dashboard">
 
-            <h1>📊 Compliance Risk Monitoring System</h1>
-
-            <p style="opacity:0.7;">
-                Real-time compliance intelligence and risk detection
-            </p>
-
-            <!-- SUMMARY CARDS -->
-            <div class="cards" style="margin-top:20px;">
-
-                <div class="card glass">
-                    <h3>✔ Compliant</h3>
-                    <p><?= mysqli_fetch_assoc($compliant)['total'] ?></p>
-                </div>
-
-                <div class="card glass">
-                    <h3>⏳ Pending</h3>
-                    <p><?= mysqli_fetch_assoc($pending)['total'] ?></p>
-                </div>
-
-                <div class="card glass">
-                    <h3>⚠ Non-Compliant</h3>
-                    <p><?= mysqli_fetch_assoc($nonCompliant)['total'] ?></p>
-                </div>
-
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <h1>Compliance</h1>
             </div>
 
-            <!-- DEPARTMENT RISK -->
-            <div class="glass" style="padding:20px;margin-top:20px;">
+            <!-- CONTENT BODY -->
+            <div class="content-body">
 
-                <h3>🏢 Department Risk Comparison</h3>
-
-                <div class="table-container">
-                    <table border="1" width="100%" cellpadding="8">
-
-                        <tr>
-                            <th>Department</th>
-                            <th>Risk Score</th>
-                            <th>Risk Level</th>
-                        </tr>
-
-                        <?php while ($d = mysqli_fetch_assoc($deptRisk)) { ?>
-
-                            <tr>
-
-                                <td><?= $d['department'] ?? 'N/A' ?></td>
-
-                                <td><?= $d['risk_score'] ?></td>
-
-                                <td>
-                                    <?php
-                                    if ($d['risk_score'] >= 10) {
-                                        echo "🔴 HIGH RISK";
-                                    } elseif ($d['risk_score'] >= 5) {
-                                        echo "🟡 MEDIUM RISK";
-                                    } else {
-                                        echo "🟢 LOW RISK";
-                                    }
-                                    ?>
-                                </td>
-
-                            </tr>
-
-                        <?php } ?>
-                    </table>
+                <div class="page-header-row">
+                    <div>
+                        <h1 class="page-title">Compliance Risk Monitoring</h1>
+                        <p class="page-subtitle">Real-time compliance intelligence and risk detection across departments and employees.</p>
+                    </div>
                 </div>
 
-            </div>
+                <!-- SUMMARY CARDS -->
+                <div class="dashboard-cards">
 
-            <!-- MAIN TABLE -->
-            <div class="glass" style="padding:20px;margin-top:20px;">
+                    <div class="stat-card">
+                        <h3>Compliant</h3>
+                        <p class="stat-value"><?= mysqli_fetch_assoc($compliant)['total'] ?></p>
+                    </div>
 
-                <h3>Employee Compliance Records</h3>
+                    <div class="stat-card">
+                        <h3>Pending</h3>
+                        <p class="stat-value"><?= mysqli_fetch_assoc($pending)['total'] ?></p>
+                    </div>
 
+                    <div class="stat-card">
+                        <h3>Non-Compliant</h3>
+                        <p class="stat-value"><?= mysqli_fetch_assoc($nonCompliant)['total'] ?></p>
+                    </div>
 
-                <div class="table-container">
+                </div>
 
-                    <table border="1" width="100%" cellpadding="8">
+                <!-- DEPARTMENT RISK -->
+                <div class="section-card">
 
-                        <tr>
-                            <th>Employee</th>
-                            <th>Department</th>
-                            <th>Policy</th>
-                            <th>Status</th>
-                            <th>Risk</th>
-                            <th>Updated</th>
-                        </tr>
+                    <h2>Department Risk Comparison</h2>
 
-                        <?php while ($r = mysqli_fetch_assoc($data)) { ?>
+                    <div class="table-box">
+                        <table class="custom-table compliance-table">
+                            <thead>
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Risk Score</th>
+                                    <th>Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($d = mysqli_fetch_assoc($deptRisk)) { ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($d['department'] ?? 'N/A') ?></td>
+                                        <td class="center-cell"><?= $d['risk_score'] ?></td>
+                                        <td>
+                                            <?php
+                                            if ($d['risk_score'] >= 10) {
+                                                echo "<span class='risk-pill risk-high'>High Risk</span>";
+                                            } elseif ($d['risk_score'] >= 5) {
+                                                echo "<span class='risk-pill risk-medium'>Medium Risk</span>";
+                                            } else {
+                                                echo "<span class='risk-pill risk-low'>Low Risk</span>";
+                                            }
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
+                    </div>
 
-                            <tr>
+                </div>
 
-                                <td><?= $r['username'] ?></td>
+                <!-- MAIN TABLE -->
+                <div class="section-card">
 
-                                <td><?= $r['department'] ?? 'N/A' ?></td>
+                    <h2>Employee Compliance Records</h2>
 
-                                <td><?= $r['policy_name'] ?></td>
+                    <div class="table-box">
 
-                                <td>
-                                    <?= $r['compliance_status'] ?>
-                                </td>
+                        <table class="custom-table compliance-table">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Department</th>
+                                    <th>Policy</th>
+                                    <th>Status</th>
+                                    <th>Risk</th>
+                                    <th>Updated</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php 
+                                mysqli_data_seek($data, 0);
+                                while ($r = mysqli_fetch_assoc($data)) { ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($r['username']) ?></td>
+                                        <td><?= htmlspecialchars($r['department'] ?? 'N/A') ?></td>
+                                        <td><?= htmlspecialchars($r['policy_name']) ?></td>
+                                        <td>
+                                            <?php
+                                            if ($r['compliance_status'] == 'Compliant') {
+                                                echo "<span class='status-pill status-compliant'>Compliant</span>";
+                                            } elseif ($r['compliance_status'] == 'Pending') {
+                                                echo "<span class='status-pill status-pending'>Pending</span>";
+                                            } else {
+                                                echo "<span class='status-pill status-noncompliant'>Non-Compliant</span>";
+                                            }
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            if ($r['compliance_status'] == "Non-Compliant") {
+                                                echo "<span class='risk-pill risk-high'>High</span>";
+                                            } elseif ($r['compliance_status'] == "Pending") {
+                                                echo "<span class='risk-pill risk-medium'>Medium</span>";
+                                            } else {
+                                                echo "<span class='risk-pill risk-low'>Low</span>";
+                                            }
+                                            ?>
+                                        </td>
+                                        <td><?= htmlspecialchars($r['updated_at']) ?></td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                        </table>
 
-                                <td>
-                                    <?php
-                                    if ($r['compliance_status'] == "Non-Compliant") {
-                                        echo "🔴 HIGH";
-                                    } elseif ($r['compliance_status'] == "Pending") {
-                                        echo "🟡 MEDIUM";
-                                    } else {
-                                        echo "🟢 LOW";
-                                    }
-                                    ?>
-                                </td>
-
-                                <td><?= $r['updated_at'] ?></td>
-
-                            </tr>
-
-                        <?php } ?>
-
-                    </table>
-
-                    <tr>
-                        <th>Employee</th>
-                        <th>Department</th>
-                        <th>Policy</th>
-                        <th>Status</th>
-                        <th>Risk</th>
-                        <th>Updated</th>
-                    </tr>
-
-                    <?php while ($r = mysqli_fetch_assoc($data)) { ?>
-
-                        <tr>
-
-                            <td><?= $r['username'] ?></td>
-
-                            <td><?= $r['department'] ?? 'N/A' ?></td>
-
-                            <td><?= $r['policy_name'] ?></td>
-
-                            <td>
-                                <?= $r['compliance_status'] ?>
-                            </td>
-
-                            <td>
-                                <?php
-                                if ($r['compliance_status'] == "Non-Compliant") {
-                                    echo "🔴 HIGH";
-                                } elseif ($r['compliance_status'] == "Pending") {
-                                    echo "🟡 MEDIUM";
-                                } else {
-                                    echo "🟢 LOW";
-                                }
-                                ?>
-                            </td>
-
-                            <td><?= $r['updated_at'] ?></td>
-
-                        </tr>
-
-                    <?php } ?>
-
-                    </table>
+                    </div>
 
                 </div>
 
             </div>
 
         </div>
+
+    </div>
 
 </body>
 

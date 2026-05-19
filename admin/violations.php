@@ -53,22 +53,30 @@ $users = mysqli_query($conn, "SELECT id, username FROM users");
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<head>
+    <?php include('../includes/header.php'); ?>
+</head>
 
 <body>
 
-    <div class="container dashboard">
+    <div class="app-layout">
 
         <?php include('sidebar.php'); ?>
 
-        <div class="main-content glass">
+        <div class="main-wrapper-dashboard">
 
-            <h1>⚠️ Violations (Discipline System)</h1>
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <h1>Violations Management</h1>
+            </div>
+
+            <!-- CONTENT BODY -->
+            <div class="content-body">
 
             <!-- CREATE VIOLATION FORM -->
-            <div class="glass" style="padding:20px; margin-top:20px;">
+            <div class="chart-container">
 
-                <h3>Create Violation</h3>
+                <h2>Create Violation</h2>
 
                 <form method="POST">
 
@@ -98,61 +106,67 @@ $users = mysqli_query($conn, "SELECT id, username FROM users");
             </div>
 
             <!-- TABLE -->
-            <div class="glass" style="margin-top:25px; padding:20px; overflow-x:auto;">
-                <div class="table-container">
-                    <table border="1" width="100%" cellpadding="8">
+            <div class="chart-container">
 
-                        <tr>
-                            <th>Employee</th>
-                            <th>Violation</th>
-                            <th>Severity</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
+                <h2>Violations List</h2>
+
+                <div class="table-box">
+                    <table class="custom-table">
+
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Violation</th>
+                                <th>Severity</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
                         <?php while ($v = mysqli_fetch_assoc($violations)) { ?>
 
                             <tr>
 
                                 <td>
-                                    <?= $v['username'] ?? 'Unknown' ?>
+                                    <?= htmlspecialchars($v['username'] ?? 'Unknown') ?>
                                     <br>
                                     <small>EMP-<?= $v['user_id'] ?></small>
                                 </td>
 
-                                <td><?= $v['violation_type'] ?></td>
+                                <td><?= htmlspecialchars($v['violation_type']) ?></td>
 
                                 <td>
                                     <?php
-                                    if ($v['severity'] == 'High') echo "🔴 High";
-                                    elseif ($v['severity'] == 'Medium') echo "🟡 Medium";
-                                    else echo "🟢 Low";
+                                    if ($v['severity'] == 'High') echo "<span style='color:#ef4444;font-weight:600;'>High</span>";
+                                    elseif ($v['severity'] == 'Medium') echo "<span style='color:#f59e0b;font-weight:600;'>Medium</span>";
+                                    else echo "<span style='color:#10b981;font-weight:600;'>Low</span>";
                                     ?>
                                 </td>
 
                                 <td>
                                     <?php
-                                    if ($v['status'] == 'Resolved') echo "🟢 Resolved";
-                                    else echo "🔴 Open";
+                                    if ($v['status'] == 'Resolved') echo "<span style='color:#10b981;font-weight:600;'>Resolved</span>";
+                                    else echo "<span style='color:#ef4444;font-weight:600;'>Open</span>";
                                     ?>
                                 </td>
 
-                                <td><?= $v['created_at'] ?></td>
+                                <td><?= htmlspecialchars($v['created_at']) ?></td>
 
                                 <td>
 
                                     <?php if ($v['status'] != 'Resolved') { ?>
 
-                                        <form method="POST">
+                                        <form method="POST" style="display:inline;">
                                             <input type="hidden" name="violation_id" value="<?= $v['id'] ?>">
-                                            <button type="submit" name="resolve_violation">
+                                            <button type="submit" name="resolve_violation" style="background:#10b981;color:#fff;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;font-size:12px;">
                                                 Resolve
                                             </button>
                                         </form>
 
                                     <?php } else { ?>
-                                        Done
+                                        <span style="color:#10b981;">Done</span>
                                     <?php } ?>
 
                                 </td>
@@ -160,11 +174,14 @@ $users = mysqli_query($conn, "SELECT id, username FROM users");
                             </tr>
 
                         <?php } ?>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            </div>
         </div>
+
     </div>
 
 </body>

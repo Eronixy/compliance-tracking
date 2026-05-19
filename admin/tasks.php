@@ -15,57 +15,69 @@ $tasks = mysqli_query($conn, "
 ");
 ?>
 
-<?php include("__DIR__ . '/../includes/header.php"); ?>
+<?php include('../includes/header.php'); ?>
 
 <body>
 
-    <div class="container dashboard">
+    <div class="app-layout">
 
         <?php include('sidebar.php'); ?>
 
+        <div class="main-wrapper-dashboard">
 
-        <div class="main-content glass">
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <h1>Task Management</h1>
+            </div>
 
-            <h1>Task Management</h1>
+            <!-- CONTENT BODY -->
+            <div class="content-body">
 
-            <div class="glass" style="padding:20px; margin-top:20px;">
+            <div class="chart-container">
 
-                <div class="table-container">
+                <h2>Tasks</h2>
 
-                    <table>
+                <div class="table-box">
 
-                        <tr>
-                            <th>Task</th>
-                            <th>Assigned To</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Deadline</th>
-                        </tr>
+                    <table class="custom-table">
+
+                        <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Assigned To</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Deadline</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
                         <?php while ($t = mysqli_fetch_assoc($tasks)) { ?>
 
                             <tr>
 
-                                <td><?php echo $t['title']; ?></td>
+                                <td><?php echo htmlspecialchars($t['title']); ?></td>
 
-                                <td><?php echo $t['fullname']; ?></td>
+                                <td><?php echo htmlspecialchars($t['fullname']); ?></td>
 
-                                <td><?php echo $t['priority']; ?></td>
+                                <td><?php echo htmlspecialchars($t['priority']); ?></td>
 
-                                <td><?php echo $t['status']; ?></td>
+                                <td><?php echo htmlspecialchars($t['status']); ?></td>
 
-                                <td><?php echo $t['deadline']; ?></td>
+                                <td><?php echo htmlspecialchars($t['deadline']); ?></td>
 
                             </tr>
 
                         <?php } ?>
 
+                        </tbody>
                     </table>
 
                 </div>
 
             </div>
 
+            </div>
         </div>
     </div>
 
