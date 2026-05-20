@@ -55,7 +55,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <html>
 
 <head>
-    <?php include('../includes/header.php'); ?>
 </head>
 
 <body>

@@ -53,9 +53,7 @@ $users = mysqli_query($conn, "SELECT id, username FROM users");
 <!DOCTYPE html>
 <html>
 
-<head>
-    <?php include('../includes/header.php'); ?>
-</head>
+
 
 <body>
 

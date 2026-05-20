@@ -6,11 +6,11 @@ $error = "";
 
 if (isset($_POST['btnLogin'])) {
 
-// FIX: use identifier instead of email
-$identifier = mysqli_real_escape_string($conn, $_POST['identifier']);
-$password = $_POST['password'];
+    // FIX: use identifier instead of email
+    $identifier = mysqli_real_escape_string($conn, $_POST['identifier']);
+    $password = $_POST['password'];
 
-$loginQuery = "
+    $loginQuery = "
        SELECT * FROM users
        WHERE email = '$identifier'
        OR username = '$identifier'
@@ -18,11 +18,11 @@ $loginQuery = "
        LIMIT 1
    ";
 
-$loginResult = mysqli_query($conn, $loginQuery);
+    $loginResult = mysqli_query($conn, $loginQuery);
 
-if ($loginResult && mysqli_num_rows($loginResult) > 0) {
+    if ($loginResult && mysqli_num_rows($loginResult) > 0) {
 
-$user = mysqli_fetch_assoc($loginResult);
+        $user = mysqli_fetch_assoc($loginResult);
 
         // 🔒 CHECK IF LOCKED FIRST
         if ($user['is_locked'] == 1) {
@@ -30,30 +30,30 @@ $user = mysqli_fetch_assoc($loginResult);
             exit();
         }
 
-// FIX: handle plain text password in DB (no hash mismatch issues)
-if ($user['password'] === $password) {
+        // FIX: handle plain text password in DB (no hash mismatch issues)
+        if ($user['password'] === $password) {
 
-$_SESSION['id'] = $user['id'];
-$_SESSION['username'] = $user['username']; // your DB uses "username"
-$_SESSION['email'] = $user['email'];
-$_SESSION['role'] = $user['role'];
+            $_SESSION['id'] = $user['id'];
+            $_SESSION['username'] = $user['username']; // your DB uses "username"
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
 
-if ($user['role'] == "admin") {
-header("Location: __DIR__ . '/../admin/dashboard.php");
-exit();
-} elseif ($user['role'] == "security") {
-header("Location: __DIR__ . '/../security/dashboard.php");
-exit();
-} elseif ($user['role'] == "employee") {
-header("Location: __DIR__ . '/../employee/dashboard.php");
-exit();
-}
-} else {
-$error = "Invalid password";
-}
-} else {
-$error = "User not found";
-}
+            if ($user['role'] == "admin") {
+                header("Location: __DIR__ . '/../admin/dashboard.php");
+                exit();
+            } elseif ($user['role'] == "security") {
+                header("Location: __DIR__ . '/../security/dashboard.php");
+                exit();
+            } elseif ($user['role'] == "employee") {
+                header("Location: __DIR__ . '/../employee/dashboard.php");
+                exit();
+            }
+        } else {
+            $error = "Invalid password";
+        }
+    } else {
+        $error = "User not found";
+    }
 }
 ?>
 

@@ -15,7 +15,6 @@ $tasks = mysqli_query($conn, "
 ");
 ?>
 
-<?php include('../includes/header.php'); ?>
 
 <body>
 

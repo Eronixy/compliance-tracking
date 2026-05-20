@@ -28,9 +28,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <!DOCTYPE html>
 <html>
 
-<head>
-    <?php include('../includes/header.php'); ?>
-</head>
+
 
 <body>
     <div class="app-layout">

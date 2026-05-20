@@ -55,9 +55,6 @@ ORDER BY date_reported DESC
 <!DOCTYPE html>
 <html>
 
-<head>
-    <?php include('../includes/header.php'); ?>
-</head>
 
 <body>
 

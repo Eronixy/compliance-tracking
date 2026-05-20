@@ -33,8 +33,6 @@ ORDER BY log_time DESC
 
 <!DOCTYPE html>
 <html>
-<?php include('../includes/header.php'); ?>
-
 <body>
 
 <div class="app-layout">

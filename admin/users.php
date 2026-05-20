@@ -117,9 +117,6 @@ $users = mysqli_query($conn, "
 <!DOCTYPE html>
 <html>
 
-<head>
-    <?php include('../includes/header.php'); ?>
-</head>
 
 <body>
 

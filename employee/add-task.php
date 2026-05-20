@@ -87,76 +87,72 @@ if (isset($_POST['save_task']) && $editMode) {
 
 <!DOCTYPE html>
 <html>
-
-<?php include('../includes/header.php'); ?>
-
+<?php include('../includes/headeremployee.php'); ?>
 
 <body>
 
-<div class="container dashboard">
+    <div class="container dashboard">
 
-    <?php include(__DIR__ . '/../includes/employee-sidebar.php'); ?>
+        <?php include(__DIR__ . '/../includes/employee-sidebar.php'); ?>
 
-    <div class="main-content glass">
+        <div class="main-content glass">
 
-        <h1>
-            <?= $editMode ? "✏️ Edit Task" : "➕ Create Task" ?>
-        </h1>
+            <h1>
+                <?= $editMode ? "✏️ Edit Task" : "➕ Create Task" ?>
+            </h1>
 
-        <p style="opacity:0.7; margin-bottom:20px;">
-            <?= $editMode ? "Update task details below." : "Fill out the form to create a new task." ?>
-        </p>
+            <p style="opacity:0.7; margin-bottom:20px;">
+                <?= $editMode ? "Update task details below." : "Fill out the form to create a new task." ?>
+            </p>
 
-        <div class="form-card glass">
+            <div class="form-card glass">
 
-            <form method="POST">
+                <form method="POST">
 
-                <!-- TITLE -->
-                <div class="input-group">
-                    <label>Task Title</label>
-                    <input type="text" name="title"
-                        value="<?= $editMode ? $task['title'] : '' ?>"
-                        required>
-                </div>
+                    <!-- TITLE -->
+                    <div class="input-group">
+                        <label>Task Title</label>
+                        <input type="text" name="title" value="<?= $editMode ? $task['title'] : '' ?>" required>
+                    </div>
 
-                <!-- PRIORITY -->
-                <div class="input-group">
-                    <label>Priority</label>
-                    <select name="priority" required>
-                        <option value="Low" <?= $editMode && $task['priority']=="Low"?"selected":"" ?>>Low</option>
-                        <option value="Medium" <?= $editMode && $task['priority']=="Medium"?"selected":"" ?>>Medium</option>
-                        <option value="High" <?= $editMode && $task['priority']=="High"?"selected":"" ?>>High</option>
-                    </select>
-                </div>
+                    <!-- PRIORITY -->
+                    <div class="input-group">
+                        <label>Priority</label>
+                        <select name="priority" required>
+                            <option value="Low" <?= $editMode && $task['priority'] == "Low" ? "selected" : "" ?>>Low</option>
+                            <option value="Medium" <?= $editMode && $task['priority'] == "Medium" ? "selected" : "" ?>>Medium
+                            </option>
+                            <option value="High" <?= $editMode && $task['priority'] == "High" ? "selected" : "" ?>>High
+                            </option>
+                        </select>
+                    </div>
 
-                <!-- DEADLINE -->
-                <div class="input-group">
-                    <label>Deadline</label>
-                    <input type="date" name="deadline"
-                        value="<?= $editMode ? $task['deadline'] : '' ?>"
-                        required>
-                </div>
+                    <!-- DEADLINE -->
+                    <div class="input-group">
+                        <label>Deadline</label>
+                        <input type="date" name="deadline" value="<?= $editMode ? $task['deadline'] : '' ?>" required>
+                    </div>
 
-                <!-- DEPARTMENT -->
-                <div class="input-group">
-                    <label>Department</label>
-                    <input type="text" name="department"
-                        value="<?= $editMode ? $task['department'] : '' ?>"
-                        required>
-                </div>
+                    <!-- DEPARTMENT -->
+                    <div class="input-group">
+                        <label>Department</label>
+                        <input type="text" name="department" value="<?= $editMode ? $task['department'] : '' ?>"
+                            required>
+                    </div>
 
-                <!-- SUBMIT -->
-                <button class="btn full" type="submit" name="save_task">
-                    <?= $editMode ? "Update Task" : "Save Task" ?>
-                </button>
+                    <!-- SUBMIT -->
+                    <button class="btn full" type="submit" name="save_task">
+                        <?= $editMode ? "Update Task" : "Save Task" ?>
+                    </button>
 
-            </form>
+                </form>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
-
 </body>
+
 </html>

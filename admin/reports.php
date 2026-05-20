@@ -64,9 +64,6 @@ SELECT COUNT(*) as total FROM violations WHERE severity='High'
 <!DOCTYPE html>
 <html>
 
-<head>
-    <?php include('../includes/header.php'); ?>
-</head>
 
 <body>
 

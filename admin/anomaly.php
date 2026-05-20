@@ -30,7 +30,7 @@ ORDER BY attempts DESC
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
+<?php include('../includes/headeradmin.php'); ?>
 
 <body>
 

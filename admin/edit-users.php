@@ -53,7 +53,6 @@ if (isset($_POST['update_user'])) {
 <!DOCTYPE html>
 <html>
 
-<?php include('../includes/header.php'); ?>
 
 <body>
 

@@ -36,9 +36,6 @@ WHERE activity_logs.action LIKE '%LOCKED%'
 <!DOCTYPE html>
 <html>
 
-<head>
-    <?php include('../includes/header.php'); ?>
-</head>
 
 <body>
 

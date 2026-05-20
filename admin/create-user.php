@@ -67,7 +67,6 @@ if (isset($_POST['create'])) {
 <html>
 
 <head>
-    <?php include('../includes/header.php'); ?>
 </head>
 
 <body>

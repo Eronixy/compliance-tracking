@@ -1,5 +1,6 @@
 <head>
-    <?php include('../includes/header.php'); ?>
+<?php include('../includes/headeradmin.php'); ?>
+<?php include('../includes/headeremployee.php'); ?>
 </head>
 
 <div class="sidebar">
